@@ -31,4 +31,5 @@
       - [ ] Look at other solutions: http://exercism.io/teams/hacku-python2/streams
       - [ ] When you are happy with your solution, copy it to your `student_work` if it's not already there
       - [ ] Create a Pull Request with your solution included.
+- [ ] Complete [Student Survey](https://drive.google.com/open?id=1fG7XCyZQtLhT-CWrQoEWXIw8lzHPn_14VkaZc4eEi-M)
 
