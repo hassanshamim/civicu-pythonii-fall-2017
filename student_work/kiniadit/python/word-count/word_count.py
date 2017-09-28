@@ -4,10 +4,9 @@ def word_count(word):
     word = re.sub('[_\W]+',' ',word)
     # convert to uppercase, remove all trailing whitespaces
     # and then split into an array
-    word_array = word.upper().strip().split()
+    word_array = word.lower().strip().split()
     # get unique elements by converting into a set
-    word_array_unique = list(set(word_array))
     output = {}
-    for x in range(0,len(word_array_unique)):
-	    output[word_array_unique[x].lower()] = word_array.count(word_array_unique[x].upper())
+    for word in set(word_array):
+	    output[word.lower()] = word_array.count(word)
     return output
