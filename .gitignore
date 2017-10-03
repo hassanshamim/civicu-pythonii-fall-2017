@@ -102,3 +102,6 @@ ENV/
 
 # Classroom Specific
 my_work/
+
+# Hassan added
+.vscode/
