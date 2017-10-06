@@ -15,12 +15,6 @@ def get_lat_long(airport_file_row):
     return float(airport_file_row["Latitude"]), float(airport_file_row["Longitude"])
 
 #
-# Given a source and destination point (lattitude, longitude) tuple, return the distance between the two points
-#
-def get_distance(source_tuple, dest_tuple):
-    return geo_distance.distance(source_tuple[0], source_tuple[1], dest_tuple[0], dest_tuple[1])
-
-#
 # Get the data from an airport file. Data is returned as a dictionary in the following format:
 # {<ID>:<airport data as dictionary>}
 #
@@ -84,7 +78,10 @@ with open("routes.dat") as infile, open ("distances.csv", "w") as outfile:
         dest_name = row['Destination-airport']
 
         # Calculate the distance between the source and destination airport for this route
-        distance = get_distance(get_lat_long(airport_data[source_id]), get_lat_long(airport_data[dest_id]))
+        lat_tuple = get_lat_long(airport_data[source_id])
+        lon_tuple = get_lat_long(airport_data[dest_id])
+        distance = geo_distance.distance(*lat_tuple, *lon_tuple)
+
         print ("Distance from <{}> to <{}> is {}".format(source_name, dest_name, distance))
 
         # Write this route information to the output file
