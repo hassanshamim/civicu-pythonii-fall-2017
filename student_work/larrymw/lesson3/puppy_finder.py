@@ -1,11 +1,12 @@
 #
-""" This module gets information from the petfinder.com API """
+""" This module finds dogs for adoption """
 #
 
 import requests
 import csv
 from pprint import pprint as pp
 
+# The standard parameters that petfinder.com uses for all dog requests
 dog_params = {"key":"900cf5ac938676646decc123b24ab678", "animal":"dog", "format":"json"}
 
 def request(req_url, params={}, print_status=False):
@@ -15,48 +16,118 @@ def request(req_url, params={}, print_status=False):
     return response
 
 def get_breed_list():
+    """ Gets a list of petfinder.com known dog breeds """
+
+    # start with the basic parameters that go with all dog requests
     params = dog_params.copy()
+
+    # request a list of all dog breeds
     response = request("http://api.petfinder.com/breed.list", params)
+
+    # dig into the returned data to find a list of breed entries
     breed_data_list = response.json()["petfinder"]["breeds"]["breed"]
     breeds = []
+
+    # extract the breed name for each entry and add it to the list
     for breed in breed_data_list:
         breed_name = breed["$t"]
         breeds.append(breed_name)
+
+    # return the list of known breeds
     return breeds
- 
+
+def find_dogs(breed, zipcode):
+    """ Find adoptable dogs of the given breed near the given zipcode """
+    params = dog_params.copy()
+    params["breed"]=breed
+    params["location"]=zip_code
+    response = request("http://api.petfinder.com/pet.find", params)
+    return response.json()["petfinder"]["pets"]["pet"]
+
+def get_zipcode_city(zipcode):
+    """ Uses Google maps API to find the city associated with the given ZIP code """
+    params = {"address":zipcode, "sensor": "false"}
+    response = request("https://maps.googleapis.com/maps/api/geocode/json",params)
+    if (response.status_code < 200 or response.status_code > 299): return None
+    city = response.json()["results"][0]["formatted_address"]
+    return city
 
 #
 # begin main
 #
 
+print ("<< This program will help you find adoptable dogs by breed and location >>")
+
+# Get the list of know breeds
 breeds = get_breed_list()
 
+# Ask the user for their reuested breed
 req_breed = input("Input dog breed =>")
-find_breed = None
 
+#
+# Compare the user's requested breed with the list of known breeds.
+# If a case insenstive comparison matches, then use the breed name from the API
+#  
+find_breed = None
 for breed in breeds:
     if breed.lower() == req_breed.lower():
         find_breed = breed
 
+# If find_breed is undefined then we didn't find the users breed in the known breed list
 if (find_breed == None):
     print ("ERROR ** Unknown breed {} **".format(req_breed))
     print ("Know breeds are listed below:")
     print (breeds)
     exit()
 
+# Get the zip code to start searching for the dog
 zip_code = input("Enter the starting zip code:")
 
-params = dog_params.copy()
-params["breed"]=find_breed
-params["location"]=zip_code
-response = request("http://api.petfinder.com/pet.find", params)
+# Get the city associated with the requested ZIP code
+search_city = get_zipcode_city(zip_code)
 
-pets = response.json()["petfinder"]["pets"]["pet"]
-print("Found {} {} dogs near {}".format(len(pets), find_breed, zip_code))
+# If the city wasn't found, then the ZIP code was invalid
+if (search_city == None):
+    print("ERROR ** Unknow ZIP code {} **".format(zip_code))
+    exit()
 
+# Let the user send the pet information to an output file
+output_filename = input("Enter output file name (Hit <enter> for no file output) =>")
+
+print ("Searching for {} dogs near {} {}...".format(find_breed, zip_code, search_city))
+
+# Find the matching dogs
+pets = find_dogs(find_breed, zip_code)
+
+# This will hold a list of found pets
+found_pets = []
+
+#
+# For each pet in the JSON data, pick out the name, search_city and state
+# Write this to the console and also save it in a list
+#
 for pet in pets:
     name = pet["name"]["$t"]
     city = pet["contact"]["city"]["$t"]
     state = pet["contact"]["state"]["$t"]
-    print("{} - {}, {}".format(name, city, state))
+    found_pets.append({"name": name, "city": city, "state": state})
+    line = "{} - {}, {}".format(name, city, state)
+    print(line)
+
+print("Found {} {} dogs near {} {}".format(len(pets), find_breed, zip_code, search_city))
+
+
+# If an output file was specified by the user, write the pet information to
+# the file as CSV
+
+if output_filename != "":
+    with open(output_filename, "w") as outfile:
+        writer = csv.DictWriter(outfile, ["name", "city", "state"])
+        writer.writeheader()
+        for pet in found_pets:
+            writer.writerow(pet)
+    print ("Pet information written to file <{}>".format(output_filename))
+
+
+
 
