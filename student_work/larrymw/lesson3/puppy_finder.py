@@ -48,18 +48,19 @@ def find_dogs(breed, zipcode):
     return response.json()["petfinder"]["pets"]["pet"]
 
 def get_zipcode_city(zipcode):
-    """ Uses Google maps API to find the city associated with the given ZIP code """
+    """ Uses zippopotaums API to find the city associated with the given ZIP code """
 
     # query the Google maps api for information on the given zipcode
-    params = {"address":zipcode, "components":"country:US","sensor": "false"}
-    response = request("https://maps.googleapis.com/maps/api/geocode/json",params)
+    response = request("https://api.zippopotam.us/us/"+zipcode)
 
     # make sure the request was successful
     if (response.status_code < 200 or response.status_code > 299): return None
 
+    response_data = response.json()
+    place = response_data["places"][0]
+
     # return the city name from the response information
-    city = response.json()["results"][0]["formatted_address"]
-    return city
+    return "{}, {} {}".format(place["place name"], place["state abbreviation"], response_data["post code"])
 
 #
 # begin main
