@@ -33,7 +33,13 @@ In addition to doing the above in class, we will have a short demo of jupyter no
 
 
 
-### Links
+### Reference Links
+
+[Numpy CheetSheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf)
+
+[Python Data Science Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/)
+
+### Repo Links
 
 [Original Repository](https://github.com/jakevdp/PythonDataScienceHandbook)
 
@@ -54,10 +60,3 @@ In addition to doing the above in class, we will have a short demo of jupyter no
 - (may) be a bit slower
 
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/jakevdp/PythonDataScienceHandbook/master?filepath=notebooks%2F02.00-Introduction-to-NumPy.ipynb)
-
-
-
-Numpy CheetSheet
-
-![Cheatsheet](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf)
-
