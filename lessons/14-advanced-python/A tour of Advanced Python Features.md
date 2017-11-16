@@ -346,14 +346,14 @@ They can be much more complicated than this, but the takeaway is the same - they
 
 ## Context Managers
 
-These you will use the least, simply because they are a nice tool.   We've seen context managers before, specifically when working with files.  They take the form:
+These you will use the least, simply because they are a niche tool.   We've seen context managers before, specifically when working with files.  They take the form:
 
 ```python
 with context_manager() as variable_name:
     # do thing with variable_name
 ```
 
-Under the hood, decorators call `__enter__` when first invoked, and `__exit__` when your block of code is completed.  They handle set up and teardown, and are most commonly used when you have some specific operations both *before* and *after* some other chunk of code.  With files:
+Under the hood, the context manager calls `__enter__` when first invoked, and `__exit__` when your block of code is completed.  They handle set up and teardown, and are most commonly used when you have some specific operations both *before* and *after* some other chunk of code.  With files:
 
 
 
@@ -423,9 +423,7 @@ with Timer('time for summing squares up to 100: {}ms'):
 
 
 
-For simple context managers, you can use the `@contextmanager` decorator to write your context manager as a single function.
-
-
+For simple use cases, you can use the `@contextmanager` decorator to write your context manager as a single function.
 
 ```python
 from time import time
